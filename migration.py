@@ -1,3 +1,4 @@
+# %%
 import os
 
 
@@ -9,10 +10,13 @@ def remove_non_windows_friendly_characters_from_image_names():
                        for fp in images]
         for image_name in image_names:
             new_name = image_name.replace('|', '')
-            print('name', image_name)
-            print('new_name', new_name)
-            # os.rename(image_name, new_name)
+            print()
+            print(image_name)
+            print(new_name)
+            os.rename(image_name, new_name)
 
 
 if __name__ == "__main__":
     remove_non_windows_friendly_characters_from_image_names()
+
+# %%
