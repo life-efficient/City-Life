@@ -46,7 +46,11 @@ class CitiesDataset:
     # TODO define how to index this class with a city name
     def __getitem__(self, example_idx):
         """Get me the image of example 10 (example_idx)"""
-        return self.all_imgs[example_idx]
+        img_fp = self.all_imgs[example_idx]
+        img = Image.open(img_fp)
+        img.thumbnail((256, 256))
+
+        return img
 
     # TODO show a random image from a random city
 
@@ -58,6 +62,7 @@ if __name__ == "__main__":
     example100 = cities[100]
     ex10 = cities[10]
     print(example100)
+    example100.show()
     print(ex10)
     # cities['Beijing, China'].show()
 # %%
