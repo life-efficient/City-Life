@@ -7,7 +7,9 @@ from torchvision import transforms
 from sklearn.linear_model import RidgeClassifier
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
 
 
 class City:
@@ -31,18 +33,26 @@ class CitiesDataset:
 
     def __init__(self):
         self.cities = self.get_cities().values()
+
+        self.city_name_to_idx = {
+            city.name: city_idx for city_idx, city in enumerate(self.cities)}
+        self.idx_to_city_name = {value: key for key,
+                                 value in self.city_name_to_idx.items()}
+
         self.all_imgs = []
         for city in self.cities:
             self.all_imgs.extend(city.images)
         # list of all of the image exmaples
         # self.all_imgs = [*city.images for city in self.cities]
 
+        # mean, std = self.get_normalisation_parameters()
+
         size = 64
         self.transform = transforms.Compose([
             transforms.Resize(size),
             transforms.RandomCrop((size, size)),
             transforms.Grayscale(),
-            transforms.Normalize(self.get_normalisation_parameters())
+            # transforms.Normalize()
         ])
 
     def get_normalisation_parameters(self):
@@ -94,10 +104,27 @@ class CitiesDataset:
 
 
 def evaluate_sklearn_model(model, features, labels):
-    f1_score = model.score(features, labels)
     y_pred = model.predict(features)
-    # print('F1:', f1_score)
+    f1_score = model.score(features, labels)
+    print("recall:", recall_score(labels, y_pred, average="macro"))
+    print("precision:", precision_score(labels, y_pred, average="macro"))
+    print('F1:', f1_score)
     print('Accuracy:', accuracy_score(labels, y_pred))
+
+    cm = ConfusionMatrixDisplay(
+        confusion_matrix=confusion_matrix(
+            labels, y_pred)
+    )
+    cm.plot()
+    plt.show()
+    # TODO confusion matrix
+    # TODO look at other metrics
+
+    # TODO parameter tuning
+    # TODO try different models (non-neural networks)
+
+    # TODO apply deep learning
+    # TODO k-fold cross validation
 
 
 if __name__ == "__main__":
