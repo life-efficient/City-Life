@@ -10,6 +10,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
+# from random import seed
+
+# seed(42)
 
 
 class City:
@@ -35,9 +38,12 @@ class CitiesDataset:
         self.cities = self.get_cities().values()
 
         self.city_name_to_idx = {
-            city.name: city_idx for city_idx, city in enumerate(self.cities)}
-        self.idx_to_city_name = {value: key for key,
-                                 value in self.city_name_to_idx.items()}
+            city.name: city_idx for city_idx, city in enumerate(self.cities)
+        }
+        self.idx_to_city_name = {
+            value: key for
+            key, value in self.city_name_to_idx.items()
+        }
 
         self.all_imgs = []
         for city in self.cities:
@@ -103,7 +109,7 @@ class CitiesDataset:
     # TODO show a random image from a random city
 
 
-def evaluate_sklearn_model(model, features, labels):
+def evaluate_sklearn_model(model, features, labels, dataset):
     y_pred = model.predict(features)
     f1_score = model.score(features, labels)
     print("recall:", recall_score(labels, y_pred, average="macro"))
@@ -111,9 +117,14 @@ def evaluate_sklearn_model(model, features, labels):
     print('F1:', f1_score)
     print('Accuracy:', accuracy_score(labels, y_pred))
 
+    print(y_pred[0])
+    # labels = [dataset.idx_to_city_name[label] for label in labels]
+    # y_pred = [dataset.idx_to_city_name[pred] for pred in y_pred]
+
     cm = ConfusionMatrixDisplay(
         confusion_matrix=confusion_matrix(
-            labels, y_pred)
+            labels, y_pred),
+        display_labels=list(dataset.idx_to_city_name.values())
     )
     cm.plot()
     plt.show()
@@ -137,9 +148,9 @@ if __name__ == "__main__":
         X, y, test_size=round(0.1*len(X)))
     classifier.fit(X_train, y_train)
     print('Training')
-    evaluate_sklearn_model(classifier, X_train, y_train)
+    evaluate_sklearn_model(classifier, X_train, y_train, cities)
     print('Testing')
-    evaluate_sklearn_model(classifier, X_test, y_test)
+    evaluate_sklearn_model(classifier, X_test, y_test, cities)
 
 
 # %%
