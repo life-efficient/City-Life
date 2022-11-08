@@ -62,6 +62,9 @@ class CitiesDataset:
             # transforms.Normalize((0.5, 0.5, 0.5), (1, 1, 1))
         ])
 
+    def __len__(self):
+        return len(self.all_imgs)
+
     def get_normalisation_parameters(self):
         images, _ = self.get_X_y()
         print(images)
@@ -90,7 +93,8 @@ class CitiesDataset:
         img = Image.open(img_fp)
         if self.transform:
             img = self.transform(img)
-        return img, city_name
+        city_idx = self.city_name_to_idx[city_name]
+        return img, city_idx
 
     def get_X_y(self):
 
