@@ -3,9 +3,12 @@ from classifier import NeuralNetworkClassifier
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
 import torch
+from torch.utils.tensorboard import SummaryWriter
+import numpy as np
+from torch.utils.data import random_split
 
 
-def train(model, dataloader, epochs=1):
+def train(model, dataloader, val_loader, test_loader, epochs=10):
     """
     Trains a neural network on a dataset and returns the trained model
 
@@ -19,12 +22,15 @@ def train(model, dataloader, epochs=1):
 
     # components of a ml algortithms
     # 1. data
-    #  2. model
+    # 2. model
     # 3. criterion (loss function)
     # 4. optimiser
 
+    writer = SummaryWriter()
+
     # initialise an optimiser
-    optimiser = torch.optim.SGD(model.parameters(), lr=0.01)
+    optimiser = torch.optim.SGD(model.parameters(), lr=0.1)
+    batch_idx = 0
     for epoch in range(epochs):  # for each epoch
         for batch in dataloader:  # for each batch in the dataloader
             features, labels = batch
@@ -33,21 +39,50 @@ def train(model, dataloader, epochs=1):
             loss = F.cross_entropy(prediction, labels)
             loss.backward()  # calculate the gradient of the loss with respect to each model parameter
             optimiser.step()  # use the optimiser to update the model parameters using those gradients
-            print(loss)  # log the loss
+            print("Epoch:", epoch, "Loss:", loss.item())  # log the loss
             optimiser.zero_grad()  # zero grad
+            writer.add_scalar("Loss/Train", loss.item(), batch_idx)
+            batch_idx += 1
+        print('Evaluating on valiudation set')
+        # evaluate the validation set performance
+        val_loss = evaluate(model, val_loader)
+        writer.add_scalar("Loss/Val", val_loss, batch_idx)
+    # evaluate the final test set performance
+    print('Evaluating on test set')
+    test_loss = evaluate(model, test_loader)
+    # writer.add_scalar("Loss/Test", test_loss, batch_idx)
+    model.test_loss = test_loss
+    return model   # return trained model
 
-    # return trained model
 
-# class DataLoader
-#     def __iter__():
-#         while True:
-#             shuffle(dataset)
-#             for batch in dataset:
-#                 yield batch
+def evaluate(model, dataloader):
+    losses = []
+    for batch in dataloader:
+        features, labels = batch
+        prediction = model(features)
+        loss = F.cross_entropy(prediction, labels)
+        losses.append(loss.detach())
+    avg_loss = np.mean(losses)
+    print(avg_loss)
+    return avg_loss
 
 
 if __name__ == "__main__":
     dataset = CitiesDataset()
-    train_loader = DataLoader(dataset, shuffle=True, batch_size=16)
+    train_set_len = round(0.7*len(dataset))
+    val_set_len = round(0.15*len(dataset))
+    test_set_len = len(dataset) - val_set_len - train_set_len
+    split_lengths = [train_set_len, val_set_len, test_set_len]
+    # split the data to get validation and test sets
+    train_set, val_set, test_set = random_split(dataset, split_lengths)
+    train_loader = DataLoader(train_set, shuffle=True, batch_size=32)
+    val_loader = DataLoader(val_set, batch_size=32)
+    test_loader = DataLoader(test_set, batch_size=32)
     nn = NeuralNetworkClassifier()
-    train(nn, train_loader)
+    train(
+        nn,
+        train_loader,
+        val_loader,
+        test_loader,
+        epochs=20
+    )
