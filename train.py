@@ -1,5 +1,5 @@
 from dataset import CitiesDataset
-from classifier import NeuralNetworkClassifier
+from classifier import NeuralNetworkClassifier, CNN
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
 import torch
@@ -8,7 +8,7 @@ import numpy as np
 from torch.utils.data import random_split
 
 
-def train(model, dataloader, val_loader, test_loader, epochs=10):
+def train(model, dataloader, val_loader, test_loader, epochs=100):
     """
     Trains a neural network on a dataset and returns the trained model
 
@@ -29,7 +29,7 @@ def train(model, dataloader, val_loader, test_loader, epochs=10):
     writer = SummaryWriter()
 
     # initialise an optimiser
-    optimiser = torch.optim.SGD(model.parameters(), lr=0.1)
+    optimiser = torch.optim.SGD(model.parameters(), lr=0.5)
     batch_idx = 0
     for epoch in range(epochs):  # for each epoch
         for batch in dataloader:  # for each batch in the dataloader
@@ -79,10 +79,11 @@ if __name__ == "__main__":
     val_loader = DataLoader(val_set, batch_size=32)
     test_loader = DataLoader(test_set, batch_size=32)
     nn = NeuralNetworkClassifier()
+    cnn = CNN()
     train(
-        nn,
+        cnn,
         train_loader,
         val_loader,
         test_loader,
-        epochs=20
+        epochs=1000
     )
