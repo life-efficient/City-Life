@@ -88,12 +88,6 @@ class CitiesDataset:
         if self.transform:
             img = self.transform(img)
         city_idx = self.city_name_to_idx[city_name]
-        print(img)
-        img.show()
-        print(city_name)
-        print(city_idx)
-        sleep(3)
-        sc
         return img, city_idx
 
     def get_X_y(self):

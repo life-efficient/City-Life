@@ -1,5 +1,5 @@
 from dataset import CitiesDataset
-from classifier import NeuralNetworkClassifier, CNN
+from classifier import NeuralNetworkClassifier, CNN, TransferLearning
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
 import torch
@@ -91,13 +91,13 @@ if __name__ == "__main__":
     transform = transforms.Compose([
         transforms.Resize(size),
         transforms.RandomCrop((size, size)),
-        transforms.Grayscale(),
+        # transforms.Grayscale(),
         transforms.ToTensor(),
         # transforms.Normalize((0.5, 0.5, 0.5), (1, 1, 1))
     ])
 
     dataset = CitiesDataset(transform=transform)
-    dataset = MNIST(root='./mnist-data', download=True, transform=transform)
+    # dataset = MNIST(root='./mnist-data', download=True, transform=transform) # TESTING
     # features, labels = dataset[0]
     # features.show()
     # print(labels)
@@ -113,9 +113,10 @@ if __name__ == "__main__":
     val_loader = DataLoader(val_set, batch_size=batch_size)
     test_loader = DataLoader(test_set, batch_size=batch_size)
     # nn = NeuralNetworkClassifier()
-    cnn = CNN()
+    # cnn = CNN()
+    model = TransferLearning()
     train(
-        cnn,
+        model,
         train_loader,
         val_loader,
         test_loader,
