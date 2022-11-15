@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
+from time import sleep
 # from random import seed
 
 # seed(42)
@@ -34,7 +35,7 @@ class City:
 class CitiesDataset:
     """Many examples of images from different cities"""
 
-    def __init__(self):
+    def __init__(self, transform):
         self.cities = self.get_cities().values()
 
         self.city_name_to_idx = {
@@ -53,14 +54,7 @@ class CitiesDataset:
 
         # mean, std = self.get_normalisation_parameters()
 
-        size = 64
-        self.transform = transforms.Compose([
-            transforms.Resize(size),
-            transforms.RandomCrop((size, size)),
-            transforms.Grayscale(),
-            transforms.ToTensor(),
-            # transforms.Normalize((0.5, 0.5, 0.5), (1, 1, 1))
-        ])
+        self.transform = transform
 
     def __len__(self):
         return len(self.all_imgs)
@@ -94,6 +88,12 @@ class CitiesDataset:
         if self.transform:
             img = self.transform(img)
         city_idx = self.city_name_to_idx[city_name]
+        print(img)
+        img.show()
+        print(city_name)
+        print(city_idx)
+        sleep(3)
+        sc
         return img, city_idx
 
     def get_X_y(self):
