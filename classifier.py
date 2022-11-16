@@ -1,3 +1,4 @@
+import requests
 from dataset import CitiesDataset
 import torch
 from torchvision.models import resnet50
