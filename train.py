@@ -64,8 +64,18 @@ def train(
     print('Evaluating on test set')
     test_loss = evaluate(model, test_loader)
     # writer.add_scalar("Loss/Test", test_loss, batch_idx)
+    torch.save(model.state_dict(), "models/latest_model.pt")
+    torch.save(optimiser.state_dict(), "models/optimiser.pt")
+
     model.test_loss = test_loss
     return model   # return trained model
+
+
+def load_model():
+    state_dict = torch.load("models/latest_model.pt")
+    model = TransferLearning()
+    model.load_state_dict(state_dict)
+    return model
 
 
 def evaluate(model, dataloader):
@@ -87,7 +97,7 @@ def evaluate(model, dataloader):
 
 if __name__ == "__main__":
 
-    size = 28
+    size = 128
     transform = transforms.Compose([
         transforms.Resize(size),
         transforms.RandomCrop((size, size)),
