@@ -9,11 +9,11 @@ def remove_non_windows_friendly_characters_from_image_names():
         image_names = [os.path.join("images", city_name, fp)
                        for fp in images]
         for image_name in image_names:
-            new_name = image_name.replace('|', '')
-            print()
-            print(image_name)
-            print(new_name)
-            os.rename(image_name, new_name)
+            old_name = image_name
+            image_name = image_name.replace('|', '')
+            image_name = image_name.replace('&', '')
+            image_name = image_name.replace(':', '')
+            os.rename(old_name, image_name)
 
 
 if __name__ == "__main__":
