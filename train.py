@@ -9,6 +9,7 @@ import numpy as np
 from torch.utils.data import random_split
 from torchvision.datasets import MNIST
 from torchvision import transforms
+from utils import calculate_model_size
 
 
 def train(
@@ -140,3 +141,4 @@ if __name__ == "__main__":
         lr=0.0001,
         optimiser=torch.optim.Adam
     )
+    calculate_model_size(model)

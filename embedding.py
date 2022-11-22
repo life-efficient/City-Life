@@ -26,10 +26,14 @@ def embed_all_images():
     model = TransferLearning()
 
     # load in trained parameters
-    state_dict = torch.load("models/latest_model.pt")
+    try:
+        state_dict = torch.load("models/latest_model.pt")
+
+    except:
+        raise FileNotFoundError(
+            "Model weights not found, run `train.py` first")
 
     model.load_state_dict(state_dict)
-
     for batch in image_loader:
         features, _ = batch
         embeddings = model.embed(features)
