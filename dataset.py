@@ -11,6 +11,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 from time import sleep
+from torch.utils.data import Dataset
 # from random import seed
 
 # seed(42)
@@ -32,7 +33,7 @@ class City:
         img.show()
 
 
-class CitiesDataset:
+class CitiesDataset(Dataset):
     """Many examples of images from different cities"""
 
     def __init__(self, transform):

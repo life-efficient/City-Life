@@ -1,3 +1,4 @@
+import os
 from dataset import CitiesDataset
 from classifier import NeuralNetworkClassifier, CNN, TransferLearning
 from torch.utils.data import DataLoader
@@ -63,6 +64,11 @@ def train(
     # evaluate the final test set performance
     print('Evaluating on test set')
     test_loss = evaluate(model, test_loader)
+
+    model_dir = "models"
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir)
+
     # writer.add_scalar("Loss/Test", test_loss, batch_idx)
     torch.save(model.state_dict(), "models/latest_model.pt")
     torch.save(optimiser.state_dict(), "models/optimiser.pt")
@@ -125,12 +131,12 @@ if __name__ == "__main__":
     # nn = NeuralNetworkClassifier()
     # cnn = CNN()
     model = TransferLearning()
-    train(
+    model = train(
         model,
         train_loader,
         val_loader,
         test_loader,
-        epochs=1000,
+        epochs=1,
         lr=0.0001,
         optimiser=torch.optim.Adam
     )
