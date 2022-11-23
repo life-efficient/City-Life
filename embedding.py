@@ -9,11 +9,14 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import ConfusionMatrixDisplay
 from torch.utils.tensorboard import SummaryWriter
 
+# montage images/img_*.jpg - tile 50x50 - geometry 50x50! sprite.jpg
+
 
 def embed_all_images():
 
     size = 128
-    n_images = 64
+    batch_size = 256
+
     transform = transforms.Compose([
         transforms.Resize(size),
         transforms.RandomCrop((size, size)),
@@ -22,7 +25,7 @@ def embed_all_images():
         # transforms.Normalize((0.5, 0.5, 0.5), (1, 1, 1))
     ])
     dataset = CitiesDataset(transform=transform)
-    image_loader = DataLoader(dataset, batch_size=n_images)
+    image_loader = DataLoader(dataset, batch_size=batch_size)
     model = TransferLearning()
 
     # load in trained parameters
@@ -33,12 +36,25 @@ def embed_all_images():
         raise FileNotFoundError(
             "Model weights not found, run `train.py` first")
 
+    writer = SummaryWriter()
+
     model.load_state_dict(state_dict)
-    for batch in image_loader:
+    model.eval()
+
+    print('Embedding Images')
+    for batch_idx, batch in enumerate(image_loader):
         features, _ = batch
         embeddings = model.embed(features)
-        print(embeddings)
+        # print(embeddings)
         break
+        print(f"Embedding batch {batch_idx}")
+
+    writer.add_embedding(
+        embeddings,
+        label_img=features,
+        tag="embeddings",
+        # global_step=batch_idx
+    )
 
     return features, embeddings
 
@@ -50,19 +66,12 @@ def compare_embeddings(embeddings):
     Output: Square matrix (or upper triangular) containing cosine similarity between each
 
     """
-    writer = SummaryWriter()
     features, embeddings = embeddings
     features = features.detach()
     embeddings = embeddings.detach()
-    label_img = features
-    print(label_img.shape)
-    writer.add_embedding(
-        embeddings,
-        label_img=label_img,
-        tag="embeddings"
-    )
-    img_grid = torchvision.utils.make_grid(features)
-    writer.add_image("batch", img_grid)
+
+    # img_grid = torchvision.utils.make_grid(features)
+    # writer.add_image("batch", img_grid)
     similarities = torchmetrics.functional.pairwise_cosine_similarity(
         embeddings)
     print(similarities)
