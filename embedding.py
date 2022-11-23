@@ -43,7 +43,7 @@ def embed_all_images():
 
     print('Embedding Images')
     for batch_idx, batch in enumerate(image_loader):
-        features, _ = batch
+        features, labels = batch
         embeddings = model.embed(features)
         # print(embeddings)
         break
@@ -53,6 +53,7 @@ def embed_all_images():
         embeddings,
         label_img=features,
         tag="embeddings",
+        metadata=[dataset.idx_to_city_name[int(label)] for label in labels]
         # global_step=batch_idx
     )
 
