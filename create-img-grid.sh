@@ -1,0 +1,1 @@
+montage ./images/*/*.jpg -tile 20x20 -geometry 20x20! out.jpg
