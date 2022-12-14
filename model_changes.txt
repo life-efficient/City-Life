@@ -1,0 +1,20 @@
+
+training loss reduces to <0.1 after 3 hours' training.
+validation loss remains relatively high at around 4.
+validation accuracy at around 25%.
+
+
+New settings:
+
+no grad_required in imported model
+LR = 0.0001
+batch size = 16
+input size: 128
+AdamW with weight decay = 0.001
+
+linear layers = 3
+	  torch.nn.Linear(2048, 256),
+      torch.nn.ReLU(),
+      torch.nn.Linear(256, 128),
+      torch.nn.ReLU(),
+      torch.nn.Linear(128, 10), (edited)
