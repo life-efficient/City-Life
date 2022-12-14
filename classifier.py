@@ -54,9 +54,15 @@ class CNN(torch.nn.Module):
             # torch.nn.Conv2d(16, 16, 7),
             torch.nn.ReLU(),
             torch.nn.Flatten(),
-            torch.nn.Linear(1600, 256),
+            torch.nn.Linear(1600, 800),
             torch.nn.ReLU(),
-            torch.nn.Linear(256, 64),
+            torch.nn.Linear(800, 400),
+            torch.nn.ReLU(),
+            torch.nn.Linear(400, 256),
+            torch.nn.ReLU(),
+            torch.nn.Linear(256, 100),
+            torch.nn.ReLU(),
+            torch.nn.Linear(100, 64),
             torch.nn.ReLU(),
             torch.nn.Linear(64, 10),
             # torch.nn.Softmax()
@@ -73,10 +79,13 @@ class TransferLearning(torch.nn.Module):
         self.layers = resnet50()
         for param in self.layers.parameters():
             param.grad_required = False
+            # param.lr = 0.00006
         linear_layers = torch.nn.Sequential(
-            torch.nn.Linear(2048, 256),
+            torch.nn.Linear(2048, 512),
             torch.nn.ReLU(),
-            torch.nn.Linear(256, 10),
+            torch.nn.Linear(512, 64),
+            torch.nn.ReLU(),
+            torch.nn.Linear(64, 10),
         )
         self.layers.fc = linear_layers
         # print(self.layers)

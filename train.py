@@ -1,3 +1,4 @@
+#%%
 from dataset import CitiesDataset
 from classifier import NeuralNetworkClassifier, CNN, TransferLearning
 from torch.utils.data import DataLoader
@@ -39,7 +40,8 @@ def train(
     writer = SummaryWriter()
 
     # initialise an optimiser
-    optimiser = optimiser(model.parameters(), lr=lr)
+    optimiser = optimiser(model.parameters(), lr=lr, weight_decay=0.001)
+    
     batch_idx = 0
     for epoch in range(epochs):  # for each epoch
         for batch in train_loader:  # for each batch in the dataloader
@@ -54,7 +56,7 @@ def train(
             optimiser.zero_grad()  # zero grad
             writer.add_scalar("Loss/Train", loss.item(), batch_idx)
             batch_idx += 1
-            if batch_idx % 100 == 0:
+            if batch_idx % 50 == 0:
                 print('Evaluating on valiudation set')
                 # evaluate the validation set performance
                 val_loss, val_acc = evaluate(model, val_loader)
@@ -87,16 +89,17 @@ def evaluate(model, dataloader):
 
 if __name__ == "__main__":
 
-    size = 28
+    size = 512
     transform = transforms.Compose([
-        transforms.Resize(size),
-        transforms.RandomCrop((size, size)),
+        # transforms.Resize(size),
+        transforms.RandomCrop((64, 64),pad_if_needed=True),
+        # transforms.RandomEqualize(),
         # transforms.Grayscale(),
         transforms.ToTensor(),
         # transforms.Normalize((0.5, 0.5, 0.5), (1, 1, 1))
     ])
 
-    dataset = CitiesDataset(transform=transform)
+    dataset = CitiesDataset(transform)
     # dataset = MNIST(root='./mnist-data', download=True, transform=transform) # TESTING
     # features, labels = dataset[0]
     # features.show()
@@ -108,7 +111,7 @@ if __name__ == "__main__":
     # split the data to get validation and test sets
     train_set, val_set, test_set = random_split(dataset, split_lengths)
 
-    batch_size = 64
+    batch_size = 16
     train_loader = DataLoader(train_set, shuffle=True, batch_size=batch_size)
     val_loader = DataLoader(val_set, batch_size=batch_size)
     test_loader = DataLoader(test_set, batch_size=batch_size)
@@ -122,5 +125,7 @@ if __name__ == "__main__":
         test_loader,
         epochs=1000,
         lr=0.0001,
-        optimiser=torch.optim.Adam
-    )
+        optimiser=torch.optim.AdamW
+        )
+
+# %%
