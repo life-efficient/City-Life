@@ -6,7 +6,6 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 import numpy as np
 from torch.utils.data import random_split
-from torchvision.datasets import MNIST
 from torchvision import transforms
 from torch.optim import lr_scheduler
 
@@ -40,7 +39,7 @@ def train(
 
     # initialise an optimiser
     optimiser = optimiser(model.parameters(), lr=lr, weight_decay=0.001)
-    scheduler = lr_scheduler.MultiStepLR(optimiser, milestones=[8,50], gamma=0.1,verbose=True)
+    scheduler = lr_scheduler.MultiStepLR(optimiser, milestones=[15,50], gamma=0.1,verbose=True)
     batch_idx = 0
     epoch_idx= 0
     for epoch in range(epochs):  # for each epoch
@@ -105,8 +104,9 @@ if __name__ == "__main__":
         transforms.RandomCrop((size, size), pad_if_needed=True),
         # transforms.Grayscale(),
         transforms.ToTensor(),
-        # transforms.Normalize((0.5, 0.5, 0.5), (1, 1, 1))
+        #transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
     ])
+
 
     dataset = CitiesDataset(transform=transform)
     train_set_len = round(0.7*len(dataset))
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     # split the data to get validation and test sets
     train_set, val_set, test_set = random_split(dataset, split_lengths)
 
-    batch_size = 16
+    batch_size = 32
     train_loader = DataLoader(train_set, shuffle=True, batch_size=batch_size)
     val_loader = DataLoader(val_set, batch_size=batch_size)
     test_loader = DataLoader(test_set, batch_size=batch_size)
