@@ -39,7 +39,7 @@ def train(
 
     # initialise an optimiser
     optimiser = optimiser(model.parameters(), lr=lr, weight_decay=0.001)
-    scheduler = lr_scheduler.MultiStepLR(optimiser, milestones=[15,50], gamma=0.1,verbose=True)
+    scheduler = lr_scheduler.MultiStepLR(optimiser, milestones=[20,60], gamma=0.1,verbose=True)
     batch_idx = 0
     epoch_idx= 0
     for epoch in range(epochs):  # for each epoch
@@ -129,7 +129,7 @@ if __name__ == "__main__":
         train_loader,
         val_loader,
         test_loader,
-        epochs=50,
+        epochs=100,
         lr=0.0001,
         optimiser=torch.optim.AdamW
         
