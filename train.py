@@ -42,6 +42,9 @@ def train(
     optimiser = optimiser(model.parameters(), lr=lr, weight_decay=0.001)
     batch_idx = 0
     for epoch in range(epochs):  # for each epoch
+        weights_filename=model.weights_folder_name + '_latest_weights.pt'
+        epoch_idx +=1
+        torch.save(model.state_dict(), weights_filename)
         for batch in train_loader:  # for each batch in the dataloader
             features, labels = batch
             prediction = model(features)  # make a prediction
