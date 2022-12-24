@@ -108,7 +108,7 @@ if __name__ == "__main__":
     # split the data to get validation and test sets
     train_set, val_set, test_set = random_split(dataset, split_lengths)
 
-    batch_size = 32
+    batch_size = 16
     train_loader = DataLoader(train_set, shuffle=True, batch_size=batch_size)
     val_loader = DataLoader(val_set, batch_size=batch_size)
     test_loader = DataLoader(test_set, batch_size=batch_size)
