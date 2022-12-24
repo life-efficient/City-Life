@@ -8,7 +8,7 @@ import numpy as np
 from torch.utils.data import random_split
 from torchvision.datasets import MNIST
 from torchvision import transforms
-
+from torch.optim import lr_scheduler
 
 def train(
     model,
@@ -40,8 +40,13 @@ def train(
 
     # initialise an optimiser
     optimiser = optimiser(model.parameters(), lr=lr, weight_decay=0.001)
+    scheduler = lr_scheduler.MultiStepLR(optimiser, milestones=[8,50], gamma=0.1,verbose=True)
     batch_idx = 0
+    epoch_idx= 0
     for epoch in range(epochs):  # for each epoch
+        # 
+        
+        print('Epoch:', epoch_idx,'LR:', scheduler.get_lr())
         weights_filename=model.weights_folder_name + '_latest_weights.pt'
         epoch_idx +=1
         torch.save(model.state_dict(), weights_filename)
@@ -63,13 +68,17 @@ def train(
                 val_loss, val_acc = evaluate(model, val_loader)
                 writer.add_scalar("Loss/Val", val_loss, batch_idx)
                 writer.add_scalar("Accuracy/Val", val_acc, batch_idx)
+
+        scheduler.step()
     # evaluate the final test set performance
+    
     print('Evaluating on test set')
     test_loss = evaluate(model, test_loader)
     # writer.add_scalar("Loss/Test", test_loss, batch_idx)
     model.test_loss = test_loss
+    
     return model   # return trained model
-
+    
 
 def evaluate(model, dataloader):
     losses = []
@@ -100,10 +109,6 @@ if __name__ == "__main__":
     ])
 
     dataset = CitiesDataset(transform=transform)
-    # dataset = MNIST(root='./mnist-data', download=True, transform=transform) # TESTING
-    # features, labels = dataset[0]
-    # features.show()
-    # print(labels)
     train_set_len = round(0.7*len(dataset))
     val_set_len = round(0.15*len(dataset))
     test_set_len = len(dataset) - val_set_len - train_set_len
@@ -118,12 +123,14 @@ if __name__ == "__main__":
     # nn = NeuralNetworkClassifier()
     # cnn = CNN()
     model = TransferLearning()
+    
     train(
         model,
         train_loader,
         val_loader,
         test_loader,
-        epochs=1000,
+        epochs=50,
         lr=0.0001,
         optimiser=torch.optim.AdamW
+        
     )

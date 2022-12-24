@@ -2,7 +2,8 @@ from dataset import CitiesDataset
 import torch
 from torchvision.models import resnet50
 from torchvision.models import ResNet50_Weights
-
+import os
+import time
 # class Module:
 #     def __call__(self):
 
