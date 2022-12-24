@@ -11,6 +11,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 from time import sleep
+
 # from random import seed
 
 # seed(42)
@@ -62,7 +63,7 @@ class CitiesDataset:
     def get_normalisation_parameters(self):
         images, _ = self.get_X_y()
         print(images)
-        sdsdc
+        
 
     def get_cities(self):
         city_map = {}
