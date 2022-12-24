@@ -57,7 +57,7 @@ def train(
             optimiser.zero_grad()  # zero grad
             writer.add_scalar("Loss/Train", loss.item(), batch_idx)
             batch_idx += 1
-            if batch_idx % 50 == 0:
+            if batch_idx % 25 == 0:
                 print('Evaluating on valiudation set')
                 # evaluate the validation set performance
                 val_loss, val_acc = evaluate(model, val_loader)
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     size = 128
     transform = transforms.Compose([
         transforms.Resize(size),
-        transforms.RandomCrop((size, size)),
+        transforms.RandomCrop((size, size), pad_if_needed=True),
         # transforms.Grayscale(),
         transforms.ToTensor(),
         # transforms.Normalize((0.5, 0.5, 0.5), (1, 1, 1))
