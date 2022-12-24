@@ -1,2 +1,3 @@
 mnist-data
 runs/
+model_evaluation/
