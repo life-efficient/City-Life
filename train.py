@@ -41,7 +41,6 @@ def train(
 
     # initialise an optimiser
     optimiser = optimiser(model.parameters(), lr=lr, weight_decay=0.001)
-    
     batch_idx = 0
     for epoch in range(epochs):  # for each epoch
         for batch in train_loader:  # for each batch in the dataloader
@@ -89,7 +88,7 @@ def evaluate(model, dataloader):
 
 if __name__ == "__main__":
 
-    size = 512
+    size = 128
     transform = transforms.Compose([
         # transforms.Resize(size),
         transforms.RandomCrop((64, 64),pad_if_needed=True),
@@ -126,6 +125,6 @@ if __name__ == "__main__":
         epochs=1000,
         lr=0.0001,
         optimiser=torch.optim.AdamW
-        )
+    )
 
 # %%
